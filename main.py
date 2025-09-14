@@ -17,6 +17,7 @@ app.add_middleware(
 TMDB_API_KEY = os.getenv("TMDB_API_KEY")
 TMDB_BASE_URL = "https://api.themoviedb.org/3"
 
+
 # ------------------ SEARCH ------------------
 @app.get("/search")
 def search(q: str, type: str = "movie"):
@@ -27,8 +28,8 @@ def search(q: str, type: str = "movie"):
     params = {"api_key": TMDB_API_KEY, "query": q}
     r = requests.get(url, params=params)
 
-    filtered = [item for item in r.get("results", []) if item.get("original_language") == "en"]
-    return filtered.json()
+    # filtered = [item for item in r.get("results", []) if item.get("original_language") == "en"]
+    return r.json()
 
 # ------------------ MOVIE DETAILS ------------------
 @app.get("/movie/{movie_id}")
