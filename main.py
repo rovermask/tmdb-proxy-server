@@ -28,7 +28,7 @@ def search(q: str, type: str = "movie"):
     params = {"api_key": TMDB_API_KEY, "query": q}
     r = requests.get(url, params=params).json()
 
-    filtered = [item for item in r.get("results", []) if item.get("original_language") == "en"]
+    filtered = [item for item in r.get("results", []) if (item.get("original_language") == "en" or item.get("original_language") == "hi")]
     return {"results" : filtered}
 
 # ------------------ MOVIE DETAILS ------------------
