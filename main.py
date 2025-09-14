@@ -28,8 +28,7 @@ def search(q: str, type: str = "movie"):
     r = requests.get(url, params=params)
 
     filtered = [item for item in r.get("results", []) if item.get("original_language") == "en"]
-    return {"results": filtered}
-    # return r.json()
+    return filtered.json()
 
 # ------------------ MOVIE DETAILS ------------------
 @app.get("/movie/{movie_id}")
