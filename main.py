@@ -5,10 +5,10 @@ import os
 
 app = FastAPI()
 
-# 👉 Add this middleware
+# 👉 CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # allow all domains (or restrict to yours later)
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -21,15 +21,34 @@ TMDB_BASE_URL = "https://api.themoviedb.org/3"
 # ------------------ SEARCH ------------------
 @app.get("/search")
 def search(q: str, type: str = "movie"):
-    """
-    type = movie | tv
-    """
     url = f"{TMDB_BASE_URL}/search/{type}"
     params = {"api_key": TMDB_API_KEY, "query": q}
     r = requests.get(url, params=params).json()
 
-    filtered = [item for item in r.get("results", []) if (item.get("original_language") == "en" or item.get("original_language") == "hi")]
-    return {"results" : filtered}
+    filtered = [
+        item for item in r.get("results", [])
+        if item.get("original_language") in ["en", "hi"]
+    ]
+    return {"results": filtered}
+
+# ------------------ TRENDING ------------------
+@app.get("/trending/{media_type}")
+def trending(media_type: str):
+    """
+    media_type = movie | tv
+    """
+    url = f"{TMDB_BASE_URL}/trending/{media_type}/week"
+    params = {"api_key": TMDB_API_KEY}
+
+    r = requests.get(url, params=params).json()
+
+    # optional filtering (same as search)
+    filtered = [
+        item for item in r.get("results", [])
+        if item.get("original_language") in ["en", "hi"]
+    ]
+
+    return {"results": filtered}
 
 # ------------------ MOVIE DETAILS ------------------
 @app.get("/movie/{movie_id}")
